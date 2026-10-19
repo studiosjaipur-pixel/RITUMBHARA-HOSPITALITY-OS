@@ -399,10 +399,15 @@ function LeadsBoard({ data, refresh, refreshing }: { data: Extract<LeadsLoadResu
 // ---------- cells ----------
 
 function LeadIdCell({ lead }: { lead: Lead }) {
+  // The Sheet's "Guest Name" (written from the verified booking for Guest Escalation leads); nothing when it is empty.
+  const guestName = lead.guestName.trim()
   return (
     <div>
       <div className="flex items-center gap-2">
         <span className="font-semibold font-mono text-[13px] whitespace-nowrap">{lead.id}</span>
+        {guestName && (
+          <span className="text-[13px] font-medium text-foreground truncate max-w-[12rem]" title={guestName}>· {guestName}</span>
+        )}
         <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground whitespace-nowrap">{kindLabel(lead)}</span>
       </div>
       <div className="text-[11px] text-muted-foreground mt-1">Received {when(lead.receivedMs, lead.received)}</div>

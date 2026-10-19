@@ -108,6 +108,18 @@ test("Leads page: shows the guest's name instead of 'No guest profile'; keeps th
   assert.match(text(raw), /Aani Sharma/)
 })
 
+test("Lead ID cell: keeps the ID and shows the verified Guest Name next to it; unchanged without a name", async () => {
+  const { leads } = await load(escalationLeadSheet())
+  const named = text(await render(leads.filter((l) => l.id === "H-0DD420D0C2")))
+  assert.match(named, /H-0DD420D0C2 · Aani Handoff/, "ID · name, then the kind badge")
+  const unnamed = text(await render(leads.filter((l) => l.id === "H-00000000D9")))
+  assert.match(unnamed, /H-00000000D9 Handoff/)
+  assert.doesNotMatch(unnamed, /H-00000000D9 ·/, "no separator or invented name")
+  // An OS guest profile alone does not add a name here: only the Sheet's Guest Name does.
+  const profileOnly = leads.filter((l) => l.id === "H-00000000D9").map((l) => ({ ...l, guest: { id: "g9", name: "Profile Name" } }))
+  assert.doesNotMatch(text(await render(profileOnly)), /H-00000000D9 · /)
+})
+
 test("search finds a lead by guest name or booking code", async () => {
   const { leads } = await load(escalationLeadSheet())
   const l = leads.find((x) => x.id === "H-0DD420D0C2")!
