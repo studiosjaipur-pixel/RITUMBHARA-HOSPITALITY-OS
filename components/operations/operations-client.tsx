@@ -208,7 +208,7 @@ function OperationsClientContent({
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-100px)] w-full gap-5 pb-4">
+    <div className="flex flex-col lg:h-[calc(100vh-100px)] w-full gap-4 sm:gap-5 pb-4">
       <div className="flex flex-wrap items-center justify-between gap-4 shrink-0">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Operations Hub</h1>
@@ -318,7 +318,7 @@ function OperationsClientContent({
         </Dialog>
       </div>
 
-      <div className="grid shrink-0 gap-4 sm:grid-cols-2 lg:grid-cols-6">
+      <div className="grid shrink-0 gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-6">
         {[
           { label: "Open Issues", value: statsOpen, icon: AlertCircle, color: "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400" },
           { label: "Assigned", value: statsAssigned, icon: Wrench, color: "bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400" },
@@ -340,7 +340,7 @@ function OperationsClientContent({
                 <stat.icon className="h-4 w-4" />
               </div>
             </div>
-            <h2 className="text-3xl font-bold tracking-tight">{stat.value}</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{stat.value}</h2>
           </motion.div>
         ))}
       </div>
@@ -349,7 +349,7 @@ function OperationsClientContent({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
-        className="flex flex-col flex-1 min-h-0 rounded-2xl border bg-card shadow-sm overflow-hidden"
+        className="flex flex-col flex-1 min-h-[70dvh] lg:min-h-0 rounded-2xl border bg-card shadow-sm overflow-hidden"
       >
         <div className="p-4 border-b border-border/40 bg-muted/20 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
           <div className="relative w-full sm:max-w-xs">
@@ -507,9 +507,10 @@ function OperationsClientContent({
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto bg-muted/10 p-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 h-full min-w-[768px]">
-            <div className="flex flex-col h-full rounded-2xl bg-muted/30 border border-border/40">
+        <div className="flex-1 overflow-auto bg-muted/10 p-3 sm:p-4">
+          {/* Phones swipe between the three columns; wider screens show them side by side. */}
+          <div className="grid grid-flow-col auto-cols-[85%] sm:auto-cols-[60%] md:grid-flow-row md:auto-cols-auto md:grid-cols-3 gap-3 md:gap-5 h-full snap-x snap-mandatory md:snap-none">
+            <div className="flex flex-col h-full min-h-0 snap-start rounded-2xl bg-muted/30 border border-border/40">
               <div className="p-3.5 border-b border-border/40 flex items-center justify-between sticky top-0 bg-inherit z-10 backdrop-blur-sm rounded-t-2xl">
                 <div className="flex items-center gap-2">
                   <div className="h-2.5 w-2.5 rounded-full bg-amber-500" />
@@ -524,7 +525,7 @@ function OperationsClientContent({
               </div>
             </div>
 
-            <div className="flex flex-col h-full rounded-2xl bg-muted/30 border border-border/40">
+            <div className="flex flex-col h-full min-h-0 snap-start rounded-2xl bg-muted/30 border border-border/40">
               <div className="p-3.5 border-b border-border/40 flex items-center justify-between sticky top-0 bg-inherit z-10 backdrop-blur-sm rounded-t-2xl">
                 <div className="flex items-center gap-2">
                   <div className="h-2.5 w-2.5 rounded-full bg-blue-500" />
@@ -539,7 +540,7 @@ function OperationsClientContent({
               </div>
             </div>
 
-            <div className="flex flex-col h-full rounded-2xl bg-muted/30 border border-border/40">
+            <div className="flex flex-col h-full min-h-0 snap-start rounded-2xl bg-muted/30 border border-border/40">
               <div className="p-3.5 border-b border-border/40 flex items-center justify-between sticky top-0 bg-inherit z-10 backdrop-blur-sm rounded-t-2xl">
                 <div className="flex items-center gap-2">
                   <div className="h-2.5 w-2.5 rounded-full bg-emerald-500" />

@@ -311,7 +311,7 @@ export function UnitsClient({
         </div>
       </div>
 
-      <div className="grid shrink-0 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid shrink-0 gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-5">
         {[
           { label: "Total Units", value: stats.total, color: "bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400" },
           { label: "Available", value: stats.available, color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400" },
@@ -327,7 +327,7 @@ export function UnitsClient({
             className="group rounded-2xl border bg-card p-4 shadow-sm transition-all duration-300 hover:shadow-md hover:border-border/80"
           >
             <p className="text-sm font-medium text-muted-foreground mb-2">{stat.label}</p>
-            <h2 className="text-3xl font-bold tracking-tight">{stat.value}</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{stat.value}</h2>
           </motion.div>
         ))}
       </div>

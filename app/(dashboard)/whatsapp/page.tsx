@@ -42,7 +42,7 @@ export default async function WhatsAppPage({
   const broadcasts = await getBroadcastCampaigns(activePropertyId)
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] flex-col">
+    <div className="flex min-h-[480px] flex-1 flex-col">
       <WhatsAppClient 
         initialThreads={threads} 
         initialBroadcasts={broadcasts}

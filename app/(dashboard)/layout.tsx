@@ -12,12 +12,12 @@ export default async function DashboardLayout({
   await requireAdminPage()
   return (
     <div className="flex h-[100dvh] overflow-hidden w-full flex-col bg-muted/30">
-      <div className="flex flex-col flex-1 sm:gap-4 sm:py-4 sm:pl-64 h-full">
-        <aside className="fixed inset-y-0 left-0 z-10 hidden w-64 flex-col sm:flex">
+      <div className="flex flex-col flex-1 min-h-0 lg:gap-4 lg:py-4 lg:pl-64 h-full">
+        <aside className="fixed inset-y-0 left-0 z-10 hidden w-64 flex-col lg:flex">
           <Sidebar />
         </aside>
         <Topbar />
-        <main className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 w-full">
+        <main className="flex-1 flex flex-col overflow-y-auto overflow-x-hidden gap-4 p-4 sm:p-6 lg:py-0 md:gap-8 w-full">
           {children}
         </main>
       </div>

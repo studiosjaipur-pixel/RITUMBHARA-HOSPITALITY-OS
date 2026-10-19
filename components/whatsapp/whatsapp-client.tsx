@@ -4,7 +4,7 @@ import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { MessageSquare, Settings, Users, Search, Phone, User, Send, Bot, Shield, Clock, PlusCircle } from "lucide-react"
 
-import { Sparkles, Paperclip, AlertCircle, X } from "lucide-react"
+import { Sparkles, Paperclip, AlertCircle, X, ArrowLeft } from "lucide-react"
 
 import { useRouter, useSearchParams } from "next/navigation"
 import { sendBroadcast, sendManualMessage, sendTemplateMessage, generateDraftResponse } from "@/app/actions/whatsapp"
@@ -24,6 +24,8 @@ export function WhatsAppClient({ initialThreads, initialBroadcasts, properties, 
   const [activeTab, setActiveTab] = useState<"inbox" | "broadcasts" | "settings">("inbox")
   const [search, setSearch] = useState("")
   const [activeThreadId, setActiveThreadId] = useState<string | null>(initialThreads[0]?.phone || null)
+  // Phones show the list or the open chat, not both.
+  const [mobileChatOpen, setMobileChatOpen] = useState(false)
   const [replyText, setReplyText] = useState("")
   const [isDrafting, setIsDrafting] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<TwilioTemplate | null>(null)
@@ -137,20 +139,20 @@ export function WhatsAppClient({ initialThreads, initialBroadcasts, properties, 
   }
 
   return (
-    <div className="flex h-full w-full flex-col bg-background p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">WhatsApp Control Center</h1>
-            <p className="text-muted-foreground mt-1">Manage guest communications, broadcasts, and AI settings.</p>
+    <div className="flex min-h-0 w-full flex-1 flex-col bg-background lg:p-6">
+      <div className={`${mobileChatOpen && activeTab === "inbox" ? "hidden md:flex" : "flex"} mb-4 sm:mb-6 flex-col lg:flex-row lg:items-center justify-between gap-3`}>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 min-w-0">
+          <div className="min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">WhatsApp Control Center</h1>
+            <p className="hidden sm:block text-muted-foreground mt-1">Manage guest communications, broadcasts, and AI settings.</p>
           </div>
           
           {/* Property Selector */}
-          <div className="h-10 px-3 bg-muted/20 border rounded-xl flex items-center">
+          <div className="h-10 px-3 bg-muted/20 border rounded-xl flex items-center w-full sm:w-auto">
             <select 
               value={activePropertyId} 
               onChange={(e) => handlePropertyChange(e.target.value)}
-              className="bg-transparent font-medium border-none outline-none focus:ring-0 cursor-pointer text-sm"
+              className="w-full bg-transparent font-medium border-none outline-none focus:ring-0 cursor-pointer text-sm"
             >
               <option value="ALL">All Locations</option>
               {properties.map(p => (
@@ -159,7 +161,7 @@ export function WhatsAppClient({ initialThreads, initialBroadcasts, properties, 
             </select>
           </div>
         </div>
-        <div className="flex items-center gap-2 rounded-xl border bg-card p-1 shadow-sm">
+        <div className="grid grid-cols-3 sm:flex items-center gap-1 sm:gap-2 rounded-xl border bg-card p-1 shadow-sm">
           {[
             { id: "inbox", label: "Live Inbox", icon: MessageSquare },
             { id: "broadcasts", label: "Broadcasts", icon: Users },
@@ -168,7 +170,7 @@ export function WhatsAppClient({ initialThreads, initialBroadcasts, properties, 
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`relative flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+              className={`relative flex items-center justify-center gap-2 rounded-lg px-2 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-colors ${
                 activeTab === tab.id ? "text-primary" : "text-muted-foreground hover:text-foreground"
               }`}
             >
@@ -186,7 +188,7 @@ export function WhatsAppClient({ initialThreads, initialBroadcasts, properties, 
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 relative overflow-hidden rounded-2xl border bg-card shadow-sm">
+      <div className="flex-1 min-h-[70dvh] md:min-h-0 relative overflow-hidden rounded-2xl border bg-card shadow-sm">
         <AnimatePresence mode="wait">
           {activeTab === "inbox" && (
             <motion.div 
@@ -197,7 +199,7 @@ export function WhatsAppClient({ initialThreads, initialBroadcasts, properties, 
               className="flex h-full"
             >
               {/* Sidebar */}
-              <div className="w-80 border-r flex flex-col bg-muted/10">
+              <div className={`${mobileChatOpen ? "hidden md:flex" : "flex"} w-full md:w-80 md:shrink-0 md:border-r flex-col bg-muted/10`}>
                 <div className="p-4 border-b">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -214,7 +216,7 @@ export function WhatsAppClient({ initialThreads, initialBroadcasts, properties, 
                   {filteredThreads.map(thread => (
                     <button
                       key={thread.phone}
-                      onClick={() => setActiveThreadId(thread.phone)}
+                      onClick={() => { setActiveThreadId(thread.phone); setMobileChatOpen(true) }}
                       className={`w-full flex items-start gap-3 p-3 rounded-xl text-left transition-colors ${
                         activeThreadId === thread.phone ? "bg-primary/5 ring-1 ring-primary/20" : "hover:bg-muted"
                       }`}
@@ -247,24 +249,32 @@ export function WhatsAppClient({ initialThreads, initialBroadcasts, properties, 
               </div>
 
               {/* Main Chat Area */}
-              <div className="flex-1 flex flex-col bg-background">
+              <div className={`${mobileChatOpen ? "flex" : "hidden md:flex"} flex-1 min-w-0 flex-col bg-background`}>
                 {activeThread ? (
                   <>
                     {/* Chat Header */}
-                    <div className="h-16 border-b flex items-center px-6 justify-between bg-card">
-                      <div className="flex items-center gap-3">
-                        <div className={`h-10 w-10 rounded-full flex items-center justify-center ${activeThread.teamMember ? 'bg-blue-100 text-blue-600' : 'bg-rose-100 text-rose-600'}`}>
+                    <div className="h-16 border-b flex items-center px-3 sm:px-6 gap-2 justify-between bg-card">
+                      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                        <button
+                          type="button"
+                          onClick={() => setMobileChatOpen(false)}
+                          className="md:hidden -ml-1 rounded-lg p-1.5 text-muted-foreground hover:bg-muted"
+                          aria-label="Back to conversations"
+                        >
+                          <ArrowLeft className="h-5 w-5" />
+                        </button>
+                        <div className={`h-10 w-10 shrink-0 rounded-full flex items-center justify-center ${activeThread.teamMember ? 'bg-blue-100 text-blue-600' : 'bg-rose-100 text-rose-600'}`}>
                           {activeThread.teamMember ? <Shield className="h-5 w-5" /> : <User className="h-5 w-5" />}
                         </div>
-                        <div>
-                          <h2 className="font-semibold">{activeThread.teamMember ? activeThread.teamMember.name : (activeThread.guest ? activeThread.guest.name : activeThread.phone)}</h2>
+                        <div className="min-w-0">
+                          <h2 className="font-semibold truncate">{activeThread.teamMember ? activeThread.teamMember.name : (activeThread.guest ? activeThread.guest.name : activeThread.phone)}</h2>
                           <p className="text-xs text-muted-foreground flex items-center gap-1">
                             <Phone className="h-3 w-3" /> {activeThread.phone}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-600">
+                        <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-600">
                           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                           AI Active
                         </span>
@@ -272,9 +282,9 @@ export function WhatsAppClient({ initialThreads, initialBroadcasts, properties, 
                     </div>
 
                     {/* Messages */}
-                    <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[#f0f2f5] dark:bg-background">
+                    <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 bg-[#f0f2f5] dark:bg-background">
                       {(!activeThread.teamMember && isOutsideWindow) && (
-                        <div className="bg-orange-50 border border-orange-200 text-orange-800 rounded-xl p-3 flex items-center justify-center gap-2 text-sm text-center mb-4 mx-8">
+                        <div className="bg-orange-50 border border-orange-200 text-orange-800 rounded-xl p-3 flex items-center justify-center gap-2 text-sm text-center mb-4 sm:mx-8">
                           <AlertCircle className="h-4 w-4" />
                           24-hour window expired. You can only send pre-approved templates until the guest replies.
                         </div>
@@ -284,7 +294,7 @@ export function WhatsAppClient({ initialThreads, initialBroadcasts, properties, 
                         const isSystem = msg.direction === 'OUTBOUND';
                         return (
                           <div key={msg.id} className={`flex flex-col ${isSystem ? 'items-end' : 'items-start'}`}>
-                            <div className={`max-w-[70%] rounded-2xl px-4 py-2 ${
+                            <div className={`max-w-[85%] sm:max-w-[70%] rounded-2xl px-4 py-2 ${
                               isSystem 
                                 ? 'bg-[#d9fdd3] dark:bg-primary text-foreground dark:text-primary-foreground rounded-tr-sm shadow-sm' 
                                 : 'bg-white dark:bg-muted text-foreground rounded-tl-sm shadow-sm'
@@ -305,13 +315,13 @@ export function WhatsAppClient({ initialThreads, initialBroadcasts, properties, 
                     </div>
 
                     {/* Chat Input */}
-                    <div className="p-4 bg-card border-t relative">
+                    <div className="p-3 sm:p-4 bg-card border-t relative">
                       
                       {/* Template Selector Dropdown & AI Draft */}
                       {!activeThread.teamMember && (
-                        <div className="mb-3 flex items-center justify-between">
+                        <div className="mb-3 flex items-center justify-between gap-2">
                           <select 
-                            className="bg-muted text-sm rounded-md px-3 py-1.5 border-none outline-none focus:ring-1 focus:ring-primary w-64"
+                            className="bg-muted text-sm rounded-md px-3 py-1.5 border-none outline-none focus:ring-1 focus:ring-primary min-w-0 flex-1 sm:flex-none sm:w-64"
                             value={selectedTemplate?.id || ""}
                             onChange={(e) => {
                               if (!e.target.value) { setSelectedTemplate(null); return; }
@@ -330,7 +340,7 @@ export function WhatsAppClient({ initialThreads, initialBroadcasts, properties, 
                             <button 
                               onClick={handleGenerateDraft}
                               disabled={isDrafting}
-                              className="flex items-center gap-1.5 text-xs font-medium bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-1.5 rounded-full transition-colors"
+                              className="flex shrink-0 items-center gap-1.5 text-xs font-medium bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-1.5 rounded-full transition-colors"
                             >
                               <Sparkles className="h-3 w-3" />
                               {isDrafting ? "Drafting..." : "Draft AI Reply"}
@@ -344,7 +354,7 @@ export function WhatsAppClient({ initialThreads, initialBroadcasts, properties, 
                         {selectedTemplate && (
                           <motion.div 
                             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
-                            className="absolute bottom-full left-4 right-4 mb-2 bg-background border shadow-2xl rounded-xl p-5 z-20"
+                            className="absolute bottom-full left-2 right-2 sm:left-4 sm:right-4 mb-2 bg-background border shadow-2xl rounded-xl p-4 sm:p-5 z-20"
                           >
                             <div className="flex justify-between items-center mb-3">
                               <h3 className="font-semibold text-sm text-foreground">Send Template: <span className="text-primary">{selectedTemplate.label}</span></h3>
@@ -398,7 +408,7 @@ export function WhatsAppClient({ initialThreads, initialBroadcasts, properties, 
                           type="text" 
                           disabled={isOutsideWindow}
                           placeholder={isOutsideWindow ? (activeThread.teamMember ? "24h window closed. Staff must reply first." : "24h window closed. Use a template.") : "Type a manual reply to take over from AI..."}
-                          className="flex-1 rounded-full border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex-1 min-w-0 rounded-full border border-border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
                           value={replyText}
                           onChange={(e) => setReplyText(e.target.value)}
                           onKeyDown={(e) => {
@@ -433,7 +443,7 @@ export function WhatsAppClient({ initialThreads, initialBroadcasts, properties, 
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
-              className="p-8 overflow-y-auto h-full bg-muted/5"
+              className="p-4 sm:p-8 overflow-y-auto h-full bg-muted/5"
             >
               <div className="max-w-3xl mx-auto space-y-8">
                 <div>
@@ -442,19 +452,19 @@ export function WhatsAppClient({ initialThreads, initialBroadcasts, properties, 
                 </div>
                 
                 <div className="space-y-6">
-                  <div className="rounded-2xl border bg-card p-6 shadow-sm">
-                    <div className="flex items-center justify-between mb-4">
+                  <div className="rounded-2xl border bg-card p-4 sm:p-6 shadow-sm">
+                    <div className="flex items-center justify-between gap-4 mb-4">
                       <div>
                         <h3 className="font-semibold">AI Assistant Status</h3>
                         <p className="text-sm text-muted-foreground">Enable or disable automated AI replies for guests.</p>
                       </div>
-                      <div className="h-6 w-11 rounded-full bg-emerald-500 relative cursor-pointer shadow-inner">
+                      <div className="h-6 w-11 shrink-0 rounded-full bg-emerald-500 relative cursor-pointer shadow-inner">
                         <div className="absolute right-1 top-1 h-4 w-4 rounded-full bg-white shadow-sm" />
                       </div>
                     </div>
                   </div>
 
-                  <div className="rounded-2xl border bg-card p-6 shadow-sm">
+                  <div className="rounded-2xl border bg-card p-4 sm:p-6 shadow-sm">
                     <h3 className="font-semibold mb-2">System Prompt</h3>
                     <p className="text-sm text-muted-foreground mb-4">The core instructions that dictate the AI's behavior and tone.</p>
                     <textarea 
@@ -481,34 +491,34 @@ If they complain, apologize profusely and escalate the issue immediately.`}
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
-              className="p-8 h-full flex flex-col bg-muted/5"
+              className="p-4 sm:p-8 h-full flex flex-col bg-muted/5"
             >
               <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col">
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8">
                   <div>
                     <h2 className="text-xl font-bold flex items-center gap-2 mb-1"><Users className="h-6 w-6 text-primary" /> Campaigns & Broadcasts</h2>
                     <p className="text-muted-foreground text-sm">Send bulk updates or promotional offers to your guests.</p>
                   </div>
                   <button 
                     onClick={() => setIsBroadcastModalOpen(true)}
-                    className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-semibold flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-sm"
+                    className="self-start px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-semibold flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-sm"
                   >
                     <PlusCircle className="h-4 w-4" /> New Broadcast
                   </button>
                 </div>
                 
                 <div className="flex-1 rounded-2xl border bg-card overflow-hidden shadow-sm flex flex-col">
-                  <div className="p-4 border-b bg-muted/30 grid grid-cols-4 font-semibold text-sm text-muted-foreground">
+                  <div className="p-4 border-b bg-muted/30 grid grid-cols-4 gap-2 font-semibold text-xs sm:text-sm text-muted-foreground">
                     <div className="col-span-2">Campaign Name</div>
-                    <div>Sent / Delivered</div>
+                    <div><span className="sm:hidden">Delivered</span><span className="hidden sm:inline">Sent / Delivered</span></div>
                     <div>Date</div>
                   </div>
                   
                   {initialBroadcasts.length > 0 ? (
                     <div className="divide-y overflow-y-auto">
                       {initialBroadcasts.map((campaign, idx) => (
-                        <div key={idx} className="p-4 grid grid-cols-4 items-center hover:bg-muted/10 transition-colors">
-                          <div className="col-span-2 font-medium">{campaign.name}</div>
+                        <div key={idx} className="p-4 grid grid-cols-4 gap-2 items-center text-sm hover:bg-muted/10 transition-colors">
+                          <div className="col-span-2 font-medium break-words min-w-0">{campaign.name}</div>
                           <div>
                             <span className="text-emerald-600 font-semibold">{campaign.deliveredCount}</span> / {campaign.sentCount}
                           </div>

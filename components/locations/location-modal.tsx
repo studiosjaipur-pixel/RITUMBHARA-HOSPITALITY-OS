@@ -50,7 +50,7 @@ export function LocationModal({ isOpen, onClose, location }: LocationModalProps)
         className="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center px-8 py-6 border-b border-gray-100 bg-white/50">
+        <div className="flex justify-between items-center px-5 sm:px-8 py-4 sm:py-6 border-b border-gray-100 bg-white/50">
           <h2 className="text-xl font-bold text-gray-900 tracking-tight">
             {location ? "Edit Location" : "Add New Location"}
           </h2>
@@ -62,7 +62,7 @@ export function LocationModal({ isOpen, onClose, location }: LocationModalProps)
           </button>
         </div>
 
-        <div className="overflow-y-auto flex-1 p-8">
+        <div className="overflow-y-auto flex-1 p-5 sm:p-8">
           {error && (
             <div className="mb-6 p-4 bg-red-50 text-red-600 text-sm rounded-xl border border-red-100 flex items-start gap-3">
               <div className="p-1 bg-red-100 rounded-full">
@@ -73,7 +73,7 @@ export function LocationModal({ isOpen, onClose, location }: LocationModalProps)
           )}
 
           <form ref={formRef} id="locationForm" onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div className="col-span-2">
                 <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
                   Property Name *

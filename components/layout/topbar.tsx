@@ -1,4 +1,4 @@
-import { Bell, Search, Menu } from 'lucide-react'
+import { Bell, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -10,27 +10,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet'
-import { Sidebar } from './sidebar'
+import { MobileNav } from './mobile-nav'
 import { LogoutMenuItem } from './logout-menu-item'
 
 export function Topbar() {
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border/40 bg-background/80 backdrop-blur-xl px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:backdrop-blur-none sm:px-6">
-      <Sheet>
-        <SheetTrigger render={<Button size="icon" variant="ghost" className="sm:hidden hover:bg-accent" />}>
-          <Menu className="h-5 w-5" />
-          <span className="sr-only">Toggle Menu</span>
-        </SheetTrigger>
-        <SheetContent side="left" className="sm:max-w-xs p-0 border-border/40">
-          <SheetTitle className="sr-only">Menu</SheetTitle>
-          <SheetDescription className="sr-only">Navigation menu</SheetDescription>
-          <Sidebar />
-        </SheetContent>
-      </Sheet>
-      
-      <div className="flex w-full items-center justify-between sm:justify-end gap-4 md:ml-auto md:gap-2 lg:gap-4">
-        <div className="flex-1 md:flex-initial hidden sm:block">
+    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-border/40 bg-background/80 backdrop-blur-xl px-4 sm:px-6 lg:static lg:h-auto lg:border-0 lg:bg-transparent lg:backdrop-blur-none">
+      <MobileNav />
+      <span className="lg:hidden text-sm font-bold tracking-tight text-[#5c0a20] dark:text-rose-200">Hospitality OS</span>
+
+      <div className="flex flex-1 items-center justify-end gap-2 md:gap-4">
+        <div className="hidden md:block">
           <div className="flex items-center gap-2 rounded-xl bg-muted/50 px-3.5 py-2 border border-border/40">
             <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="text-sm font-medium text-muted-foreground">Ritumbhara Hotels</span>

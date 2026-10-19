@@ -128,7 +128,7 @@ export function InventoryClient({ initialItems, activePropertyId, properties, re
       </div>
 
       {/* Metrics Row */}
-      <div className="grid shrink-0 gap-4 sm:grid-cols-3">
+      <div className="grid shrink-0 gap-3 sm:gap-4 grid-cols-2 sm:grid-cols-3">
         {[
           { label: "Total Items", value: items.length, icon: Box, color: "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400" },
           { label: "Healthy Stock", value: healthyCount, icon: CheckCircle2, color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400" },
@@ -142,12 +142,12 @@ export function InventoryClient({ initialItems, activePropertyId, properties, re
             className="group rounded-2xl border bg-card p-4 shadow-sm transition-all duration-300 hover:shadow-md hover:border-border/80"
           >
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+              <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{stat.label}</p>
               <div className={`rounded-xl p-2 ${stat.color} transition-transform duration-300 group-hover:scale-110`}>
                 <stat.icon className="h-4 w-4" />
               </div>
             </div>
-            <h2 className="text-3xl font-bold tracking-tight">{stat.value}</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{stat.value}</h2>
           </motion.div>
         ))}
       </div>
@@ -232,13 +232,13 @@ export function InventoryClient({ initialItems, activePropertyId, properties, re
           <table className="w-full caption-bottom text-sm">
             <thead className="[&_tr]:border-b bg-muted/30">
               <tr className="border-b transition-colors">
-                <th className="h-14 px-6 text-left align-middle text-xs font-bold uppercase tracking-wider text-muted-foreground">Item Name</th>
-                <th className="h-14 px-6 text-left align-middle text-xs font-bold uppercase tracking-wider text-muted-foreground">Category</th>
-                <th className="h-14 px-6 text-left align-middle text-xs font-bold uppercase tracking-wider text-muted-foreground">Stock Level</th>
-                <th className="h-14 px-6 text-left align-middle text-xs font-bold uppercase tracking-wider text-muted-foreground">Alert Threshold</th>
-                <th className="h-14 px-6 text-left align-middle text-xs font-bold uppercase tracking-wider text-muted-foreground">Deduct/Clean</th>
-                <th className="h-14 px-6 text-left align-middle text-xs font-bold uppercase tracking-wider text-muted-foreground">Status</th>
-                <th className="h-14 px-6 text-right align-middle text-xs font-bold uppercase tracking-wider text-muted-foreground">Manage</th>
+                <th className="h-14 px-4 md:px-6 text-left align-middle text-xs font-bold uppercase tracking-wider text-muted-foreground">Item Name</th>
+                <th className="hidden md:table-cell h-14 px-6 text-left align-middle text-xs font-bold uppercase tracking-wider text-muted-foreground">Category</th>
+                <th className="hidden md:table-cell h-14 px-6 text-left align-middle text-xs font-bold uppercase tracking-wider text-muted-foreground">Stock Level</th>
+                <th className="hidden lg:table-cell h-14 px-6 text-left align-middle text-xs font-bold uppercase tracking-wider text-muted-foreground">Alert Threshold</th>
+                <th className="hidden lg:table-cell h-14 px-6 text-left align-middle text-xs font-bold uppercase tracking-wider text-muted-foreground">Deduct/Clean</th>
+                <th className="hidden md:table-cell h-14 px-6 text-left align-middle text-xs font-bold uppercase tracking-wider text-muted-foreground">Status</th>
+                <th className="h-14 px-4 md:px-6 text-right align-middle text-xs font-bold uppercase tracking-wider text-muted-foreground">Manage</th>
               </tr>
             </thead>
             <tbody className="[&_tr:last-child]:border-0">
@@ -258,20 +258,27 @@ export function InventoryClient({ initialItems, activePropertyId, properties, re
 
                   return (
                     <tr key={item.id} className="border-b transition-colors hover:bg-muted/30 group">
-                      <td className="p-6 align-middle">
+                      <td className="px-4 py-4 md:p-6 align-middle">
                         <div className="flex items-center gap-3">
-                          <div className={`h-8 w-8 rounded-lg flex items-center justify-center border ${isLowStock ? 'bg-red-50 border-red-100 text-red-500' : 'bg-primary/5 border-primary/10 text-primary'}`}>
+                          <div className={`h-8 w-8 shrink-0 rounded-lg flex items-center justify-center border ${isLowStock ? 'bg-red-50 border-red-100 text-red-500' : 'bg-primary/5 border-primary/10 text-primary'}`}>
                             <Package className="w-4 h-4" />
                           </div>
-                          <span className="font-semibold text-base">{item.name}</span>
+                          <div className="min-w-0">
+                            <span className="font-semibold text-sm md:text-base">{item.name}</span>
+                            {/* Phones: stock and category fold in under the name. */}
+                            <p className="md:hidden mt-0.5 text-xs text-muted-foreground">
+                              <span className={`font-bold ${isLowStock ? 'text-red-500' : 'text-emerald-600'}`}>{item.quantity} {item.unit}</span>
+                              {" · "}{item.category.replace('_', ' ')}{isLowStock ? " · Restock" : ""}
+                            </p>
+                          </div>
                         </div>
                       </td>
-                      <td className="p-6 align-middle">
+                      <td className="hidden md:table-cell p-6 align-middle">
                         <span className="inline-flex items-center rounded-lg border bg-background px-3 py-1 text-xs font-medium text-foreground shadow-sm">
                           {item.category.replace('_', ' ')}
                         </span>
                       </td>
-                      <td className="p-6 align-middle">
+                      <td className="hidden md:table-cell p-6 align-middle">
                         <div className="flex items-center gap-2">
                           <span className={`text-xl font-bold tracking-tight ${isLowStock ? 'text-red-500' : 'text-emerald-500'}`}>
                             {item.quantity}
@@ -279,14 +286,14 @@ export function InventoryClient({ initialItems, activePropertyId, properties, re
                           <span className="text-xs font-medium text-muted-foreground uppercase">{item.unit}</span>
                         </div>
                       </td>
-                      <td className="p-6 align-middle font-medium text-muted-foreground">
+                      <td className="hidden lg:table-cell p-6 align-middle font-medium text-muted-foreground">
                         {item.minThreshold} {item.unit}
                       </td>
-                      <td className="p-6 align-middle font-medium text-muted-foreground">
+                      <td className="hidden lg:table-cell p-6 align-middle font-medium text-muted-foreground">
                         {/* @ts-ignore */}
                         {item.defaultDeduction || 0} {item.unit}
                       </td>
-                      <td className="p-6 align-middle">
+                      <td className="hidden md:table-cell p-6 align-middle">
                         {isLowStock ? (
                           <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/10 px-3 py-1 text-xs font-semibold text-rose-600 dark:text-rose-400 border border-rose-500/20">
                             <AlertTriangle className="w-3.5 h-3.5" />
@@ -299,7 +306,7 @@ export function InventoryClient({ initialItems, activePropertyId, properties, re
                           </span>
                         )}
                       </td>
-                      <td className="p-6 align-middle text-right">
+                      <td className="px-4 py-4 md:p-6 align-middle text-right">
                         <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-50 sm:group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => handleUpdateStock(item.id, -1)}

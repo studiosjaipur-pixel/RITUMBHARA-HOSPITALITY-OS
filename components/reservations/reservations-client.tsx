@@ -247,7 +247,7 @@ function ReservationsClientContent({
         </Dialog>
       </div>
 
-      <div className="grid shrink-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid shrink-0 gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
         {[
           { label: "Total Bookings", value: stats.total, icon: Calendar, color: "bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400" },
           { label: "Active Stays", value: stats.active, icon: CheckCircle2, color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400" },
@@ -262,12 +262,12 @@ function ReservationsClientContent({
             className="group rounded-2xl border bg-card p-4 shadow-sm transition-all duration-300 hover:shadow-md hover:border-border/80"
           >
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+              <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{stat.label}</p>
               <div className={`rounded-xl p-2 ${stat.color} transition-transform duration-300 group-hover:scale-110`}>
                 <stat.icon className="h-4 w-4" />
               </div>
             </div>
-            <h2 className="text-3xl font-bold tracking-tight">{stat.value}</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{stat.value}</h2>
           </motion.div>
         ))}
       </div>
@@ -307,15 +307,15 @@ function ReservationsClientContent({
         </div>
 
         <div className="flex-1 overflow-x-auto">
-          <table className="w-full text-sm text-left whitespace-nowrap">
+          <table className="w-full text-sm text-left md:whitespace-nowrap">
             <thead className="text-[11px] uppercase bg-muted/30 text-muted-foreground sticky top-0 z-10 border-b border-border/40">
               <tr>
-                <th className="px-6 py-3.5 font-semibold">Guest</th>
-                <th className="px-6 py-3.5 font-semibold">Unit</th>
-                <th className="px-6 py-3.5 font-semibold">Stay Dates</th>
-                <th className="px-6 py-3.5 font-semibold">Status</th>
-                <th className="px-6 py-3.5 font-semibold">Amount</th>
-                <th className="px-6 py-3.5 font-semibold text-right">Actions</th>
+                <th className="px-4 md:px-6 py-3.5 font-semibold">Guest</th>
+                <th className="hidden md:table-cell px-6 py-3.5 font-semibold">Unit</th>
+                <th className="hidden md:table-cell px-6 py-3.5 font-semibold">Stay Dates</th>
+                <th className="hidden md:table-cell px-6 py-3.5 font-semibold">Status</th>
+                <th className="hidden lg:table-cell px-6 py-3.5 font-semibold">Amount</th>
+                <th className="px-4 md:px-6 py-3.5 font-semibold text-right"><span className="sr-only md:not-sr-only">Actions</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40">
@@ -331,33 +331,44 @@ function ReservationsClientContent({
               ) : (
                 filteredData.map((res: any) => (
                   <tr key={res.id} className="hover:bg-muted/30 transition-colors duration-150">
-                    <td className="px-6 py-3.5">
-                      <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-rose-500/15 to-red-500/15 flex items-center justify-center text-rose-600 dark:text-rose-400 font-bold text-sm">
+                    <td className="px-4 md:px-6 py-3.5">
+                      <div className="flex items-start md:items-center gap-3">
+                        <div className="h-9 w-9 shrink-0 rounded-xl bg-gradient-to-br from-rose-500/15 to-red-500/15 flex items-center justify-center text-rose-600 dark:text-rose-400 font-bold text-sm">
                           {res.guest.name.charAt(0)}
                         </div>
-                        <div>
+                        <div className="min-w-0">
                           <div className="font-semibold text-foreground">{res.guest.name}</div>
-                          <div className="text-xs text-muted-foreground">{res.guest.email || res.guest.phone}</div>
+                          <div className="text-xs text-muted-foreground break-all md:break-normal">{res.guest.email || res.guest.phone}</div>
+                          {/* Phones: unit, dates, status and amount fold in under the guest. */}
+                          <div className="md:hidden mt-1.5 space-y-1.5 text-xs">
+                            <p className="text-muted-foreground">
+                              <span className="font-medium text-foreground">{res.unit?.name || 'Unassigned'}</span>
+                              {" · "}{format(new Date(res.checkIn), "MMM d")} – {format(new Date(res.checkOut), "MMM d, yyyy")}
+                            </p>
+                            <div className="flex flex-wrap items-center gap-2">
+                              {getStatusBadge(res.status)}
+                              <span className="font-semibold">₹{res.totalAmount.toFixed(2)}</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-3.5">
+                    <td className="hidden md:table-cell px-6 py-3.5">
                       <div className="font-semibold">{res.unit?.name || 'Unassigned'}</div>
                       <div className="text-xs text-muted-foreground">{res.unit?.type || '-'}</div>
                     </td>
-                    <td className="px-6 py-3.5">
+                    <td className="hidden md:table-cell px-6 py-3.5">
                       <div className="font-medium">{format(new Date(res.checkIn), "MMM d, yyyy")}</div>
                       <div className="text-xs text-muted-foreground">to {format(new Date(res.checkOut), "MMM d, yyyy")}</div>
                     </td>
-                    <td className="px-6 py-3.5">
+                    <td className="hidden md:table-cell px-6 py-3.5">
                       {getStatusBadge(res.status)}
                     </td>
-                    <td className="px-6 py-3.5">
+                    <td className="hidden lg:table-cell px-6 py-3.5">
                       <div className="font-semibold">₹{res.totalAmount.toFixed(2)}</div>
                       <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">{res.source}</div>
                     </td>
-                    <td className="px-6 py-3.5 text-right">
+                    <td className="px-4 md:px-6 py-3.5 text-right align-top md:align-middle">
                       <DropdownMenu>
                         <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-lg hover:bg-muted text-muted-foreground transition-colors">
                           {loadingId === res.id 

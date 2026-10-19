@@ -173,7 +173,7 @@ export function GuestsClient({
         </Dialog>
       </div>
 
-      <div className="grid shrink-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid shrink-0 gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
         {[
           { label: "Total Guests", value: stats.total, icon: Users, color: "bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400" },
           { label: "Active Members", value: stats.members, icon: CreditCard, color: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400" },
@@ -188,12 +188,12 @@ export function GuestsClient({
             className="group rounded-2xl border bg-card p-4 shadow-sm transition-all duration-300 hover:shadow-md hover:border-border/80"
           >
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+              <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{stat.label}</p>
               <div className={`rounded-xl p-2 ${stat.color} transition-transform duration-300 group-hover:scale-110`}>
                 <stat.icon className="h-4 w-4" />
               </div>
             </div>
-            <h2 className="text-3xl font-bold tracking-tight">{stat.value}</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{stat.value}</h2>
           </motion.div>
         ))}
       </div>
@@ -237,12 +237,12 @@ export function GuestsClient({
           <table className="w-full text-sm text-left">
             <thead className="text-[11px] uppercase bg-muted/30 text-muted-foreground sticky top-0 z-10 border-b border-border/40">
               <tr>
-                <th className="px-6 py-3.5 font-semibold">Guest</th>
-                <th className="px-6 py-3.5 font-semibold">Contact Info</th>
-                <th className="px-6 py-3.5 font-semibold">Membership</th>
-                <th className="px-6 py-3.5 font-semibold">Total Stays</th>
-                <th className="px-6 py-3.5 font-semibold">Total Spend</th>
-                <th className="px-6 py-3.5 font-semibold text-right">Actions</th>
+                <th className="px-4 md:px-6 py-3.5 font-semibold">Guest</th>
+                <th className="hidden md:table-cell px-6 py-3.5 font-semibold">Contact Info</th>
+                <th className="hidden lg:table-cell px-6 py-3.5 font-semibold">Membership</th>
+                <th className="hidden md:table-cell px-6 py-3.5 font-semibold">Total Stays</th>
+                <th className="hidden md:table-cell px-6 py-3.5 font-semibold">Total Spend</th>
+                <th className="px-4 md:px-6 py-3.5 font-semibold text-right"><span className="sr-only md:not-sr-only">Actions</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/40">
@@ -263,22 +263,28 @@ export function GuestsClient({
                   
                   return (
                     <tr key={guest.id} className="hover:bg-muted/30 transition-colors duration-150">
-                      <td className="px-6 py-3.5">
-                        <div className="flex items-center gap-3">
+                      <td className="px-4 md:px-6 py-3.5">
+                        <div className="flex items-start md:items-center gap-3">
                           <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-rose-500/15 to-red-500/15 flex items-center justify-center text-rose-600 dark:text-rose-400 font-bold text-sm shrink-0">
                             {guest.name.charAt(0)}
                           </div>
-                          <div>
+                          <div className="min-w-0">
                             <div className="font-semibold text-foreground">{guest.name}</div>
                             <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">ID: {guest.id.substring(guest.id.length - 6)}</div>
+                            {/* Phones: contact and stay totals fold in under the name. */}
+                            <div className="md:hidden mt-1 space-y-0.5 text-xs text-muted-foreground">
+                              <p className="font-medium text-foreground">{guest.phone}</p>
+                              {guest.email && <p className="break-all">{guest.email}</p>}
+                              <p>{totalStays} {totalStays === 1 ? "stay" : "stays"} · <span className="font-semibold text-emerald-600 dark:text-emerald-400">₹{totalSpend.toFixed(2)}</span></p>
+                            </div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-3.5">
+                      <td className="hidden md:table-cell px-6 py-3.5">
                         <div className="text-sm font-medium">{guest.phone}</div>
                         <div className="text-xs text-muted-foreground">{guest.email || '-'}</div>
                       </td>
-                      <td className="px-6 py-3.5">
+                      <td className="hidden lg:table-cell px-6 py-3.5">
                         {guest.membership ? (
                           <div className="flex flex-col gap-1 items-start">
                             {getTierBadge(guest.membership.tier)}
@@ -288,13 +294,13 @@ export function GuestsClient({
                           <span className="text-xs text-muted-foreground italic">No membership</span>
                         )}
                       </td>
-                      <td className="px-6 py-3.5">
+                      <td className="hidden md:table-cell px-6 py-3.5">
                         <div className="font-semibold">{totalStays}</div>
                       </td>
-                      <td className="px-6 py-3.5">
+                      <td className="hidden md:table-cell px-6 py-3.5">
                         <div className="font-semibold text-emerald-600 dark:text-emerald-400">₹{totalSpend.toFixed(2)}</div>
                       </td>
-                      <td className="px-6 py-3.5 text-right">
+                      <td className="px-4 md:px-6 py-3.5 text-right align-top md:align-middle">
                         <DropdownMenu>
                           <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-lg hover:bg-muted text-muted-foreground transition-colors">
                             <MoreHorizontal className="h-4 w-4" />

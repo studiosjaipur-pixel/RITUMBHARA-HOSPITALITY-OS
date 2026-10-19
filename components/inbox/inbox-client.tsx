@@ -91,6 +91,8 @@ export function InboxClient({
   const [sending, setSending] = useState(false)
   const [drafting, setDrafting] = useState(false)
   const [showQuick, setShowQuick] = useState(false)
+  // Below xl the booking panel opens over the thread instead of sitting beside it.
+  const [showBooking, setShowBooking] = useState(false)
   const [linking, setLinking] = useState(false)
   const [linkQuery, setLinkQuery] = useState("")
   const [linkResults, setLinkResults] = useState<Awaited<ReturnType<typeof searchInboxReservations>>>([])
@@ -166,6 +168,7 @@ export function InboxClient({
       setThread(null)
       setReply("")
       setShowQuick(false)
+      setShowBooking(false)
       setLinking(false)
       await loadThread(key)
       const conv = conversations.find((c) => c.key === key)
@@ -292,12 +295,12 @@ export function InboxClient({
   const res = active?.conversation.reservation ?? selected?.reservation ?? null
 
   return (
-    <div className="flex h-full w-full flex-col bg-background p-3 sm:p-6">
-      {/* Header */}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+    <div className="flex min-h-0 w-full flex-1 flex-col bg-background lg:p-6">
+      {/* Header (hidden on phones while a conversation is open, to give the thread the room) */}
+      <div className={`${selected ? "hidden md:flex" : "flex"} mb-3 sm:mb-4 flex-wrap items-center justify-between gap-3`}>
         <div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Inbox</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Every guest message from WhatsApp, Airbnb, Booking.com, Agoda and email, in one place.</p>
+          <p className="mt-1 hidden text-sm text-muted-foreground sm:block">Every guest message from WhatsApp, Airbnb, Booking.com, Agoda and email, in one place.</p>
         </div>
         <div className="flex items-center gap-2">
           {isRefreshing && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" aria-label="Refreshing" />}
@@ -441,7 +444,7 @@ export function InboxClient({
             </div>
           ) : (
             <>
-              <header className="flex items-center gap-3 border-b px-3 py-3 sm:px-4">
+              <header className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b px-3 py-3 sm:flex-nowrap sm:px-4">
                 <button
                   onClick={() => {
                     setSelectedKey(null)
@@ -461,10 +464,20 @@ export function InboxClient({
                     {selected.subject || selected.contact || CHANNELS[selected.channel].label}
                   </p>
                 </div>
+                {/* On phones the actions drop to a second row under the name. */}
+                <div className="flex w-full items-center gap-2 sm:w-auto">
+                <button
+                  type="button"
+                  onClick={() => setShowBooking((v) => !v)}
+                  className={`flex h-8 items-center gap-1.5 rounded-lg border px-2.5 text-xs font-medium hover:bg-muted xl:hidden ${showBooking ? "bg-muted" : ""}`}
+                  aria-pressed={showBooking}
+                >
+                  <BedDouble className="h-3.5 w-3.5" /> Booking
+                </button>
                 <select
                   value={selected.assignee?.id ?? ""}
                   onChange={(e) => handleAssign(e.target.value)}
-                  className="h-8 max-w-[7rem] cursor-pointer rounded-lg border bg-background px-2 text-xs sm:max-w-[9rem]"
+                  className="h-8 min-w-0 flex-1 cursor-pointer rounded-lg border bg-background px-2 text-xs sm:max-w-[9rem] sm:flex-none"
                   aria-label="Assign to"
                 >
                   <option value="">Unassigned</option>
@@ -489,12 +502,13 @@ export function InboxClient({
                     <RotateCcw className="h-3.5 w-3.5" /> Re-open
                   </button>
                 )}
+                </div>
               </header>
 
-              <div className="flex min-h-0 flex-1">
+              <div className="relative flex min-h-0 flex-1">
                 {/* Messages + composer */}
                 <div className="flex min-w-0 flex-1 flex-col">
-                  <div className="flex-1 space-y-3 overflow-y-auto bg-muted/10 p-4">
+                  <div className="flex-1 space-y-3 overflow-y-auto bg-muted/10 p-3 sm:p-4">
                     {threadLoading && !active && (
                       <div className="flex justify-center py-10">
                         <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
@@ -606,8 +620,20 @@ export function InboxClient({
                 </div>
 
                 {/* Booking panel */}
-                <aside className="hidden w-72 shrink-0 overflow-y-auto border-l p-4 xl:block">
-                  <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">Booking</h3>
+                <aside
+                  className={`${showBooking ? "absolute inset-0 z-30 block bg-card" : "hidden"} overflow-y-auto p-4 xl:static xl:z-auto xl:block xl:w-72 xl:shrink-0 xl:border-l xl:bg-transparent`}
+                >
+                  <div className="mb-3 flex items-center justify-between">
+                    <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Booking</h3>
+                    <button
+                      type="button"
+                      onClick={() => setShowBooking(false)}
+                      className="rounded-lg p-1 text-muted-foreground hover:bg-muted xl:hidden"
+                      aria-label="Close booking details"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
                   {res ? (
                     <div className="space-y-3 text-sm">
                       <div className="flex items-start gap-2">

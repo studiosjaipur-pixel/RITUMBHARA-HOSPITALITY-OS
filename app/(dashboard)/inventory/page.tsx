@@ -51,9 +51,9 @@ export default async function InventoryPage({
   const items = await getInventoryItems(activePropertyId)
 
   return (
-    <div className="flex-1 space-y-4 p-8 pt-6">
+    <div className="flex-1 space-y-4 sm:p-8 sm:pt-6">
       <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Inventory Engine</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Inventory Engine</h2>
       </div>
       <InventoryClient 
         initialItems={items} 

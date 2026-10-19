@@ -40,23 +40,23 @@ export function TeamClient({ initialMembers, properties }: TeamClientProps) {
   };
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8">
+    <div className="w-full max-w-7xl mx-auto space-y-6 sm:space-y-8 sm:p-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
-            <Users className="w-8 h-8 text-rose-600" />
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
+            <Users className="w-7 h-7 sm:w-8 sm:h-8 text-rose-600" />
             Team Management
           </h1>
           <p className="text-gray-500 mt-1">Manage staff, roles, and WhatsApp automation numbers.</p>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="relative">
+        <div className="flex w-full sm:w-auto items-center gap-3 sm:gap-4">
+          <div className="relative flex-1 sm:flex-none min-w-0">
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
             <select
               value={locationFilter}
               onChange={(e) => setLocationFilter(e.target.value)}
-              className="pl-9 pr-8 py-2 rounded-xl border border-gray-200 bg-white text-sm font-medium focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none appearance-none"
+              className="w-full pl-9 pr-8 py-2 rounded-xl border border-gray-200 bg-white text-sm font-medium focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 outline-none appearance-none"
             >
               <option value="ALL">All Locations</option>
               {properties.map(p => (
@@ -66,10 +66,11 @@ export function TeamClient({ initialMembers, properties }: TeamClientProps) {
           </div>
           <button
             onClick={handleAddNew}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/20 transition-all duration-200 hover:bg-primary/90 hover:shadow-md hover:shadow-primary/25 active:scale-[0.98]"
+            className="shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/20 transition-all duration-200 hover:bg-primary/90 hover:shadow-md hover:shadow-primary/25 active:scale-[0.98]"
           >
             <Plus className="w-5 h-5" />
-            Add Team Member
+            <span className="hidden sm:inline">Add Team Member</span>
+            <span className="sm:hidden">Add</span>
           </button>
         </div>
       </div>
@@ -80,12 +81,12 @@ export function TeamClient({ initialMembers, properties }: TeamClientProps) {
           <table className="w-full text-sm text-left">
             <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-100">
               <tr>
-                <th className="px-6 py-4">Name</th>
-                <th className="px-6 py-4">Location</th>
-                <th className="px-6 py-4">Department & Role</th>
-                <th className="px-6 py-4">WhatsApp Number</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Actions</th>
+                <th className="px-4 sm:px-6 py-4">Name</th>
+                <th className="hidden md:table-cell px-6 py-4">Location</th>
+                <th className="hidden md:table-cell px-6 py-4">Department & Role</th>
+                <th className="hidden lg:table-cell px-6 py-4">WhatsApp Number</th>
+                <th className="px-2 sm:px-6 py-4">Status</th>
+                <th className="px-4 sm:px-6 py-4 text-right"><span className="sr-only sm:not-sr-only">Actions</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -98,13 +99,18 @@ export function TeamClient({ initialMembers, properties }: TeamClientProps) {
               ) : (
                 filteredMembers.map((member) => (
                   <tr key={member.id} className="hover:bg-gray-50/50 transition-colors">
-                    <td className="px-6 py-4 font-medium text-gray-900">
+                    <td className="px-4 sm:px-6 py-4 font-medium text-gray-900">
                       {member.name}
+                      {/* On small screens the hidden columns fold in under the name. */}
+                      <div className="lg:hidden mt-0.5 space-y-0.5 text-xs font-normal text-gray-500">
+                        <p className="md:hidden capitalize">{member.department.replace("_", " ")} · {member.role.toLowerCase()} · {member.property?.name || "Unassigned"}</p>
+                        <p className="font-mono">{member.whatsappNumber}</p>
+                      </div>
                     </td>
-                    <td className="px-6 py-4 text-gray-600 font-medium">
+                    <td className="hidden md:table-cell px-6 py-4 text-gray-600 font-medium">
                       {member.property?.name || "Unassigned"}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="hidden md:table-cell px-6 py-4">
                       <div className="flex flex-col">
                         <span className="font-medium text-gray-900 capitalize">
                           {member.department.replace("_", " ")}
@@ -114,10 +120,10 @@ export function TeamClient({ initialMembers, properties }: TeamClientProps) {
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 font-mono text-gray-600">
+                    <td className="hidden lg:table-cell px-6 py-4 font-mono text-gray-600">
                       {member.whatsappNumber}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-2 sm:px-6 py-4">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           member.isActive
@@ -128,8 +134,8 @@ export function TeamClient({ initialMembers, properties }: TeamClientProps) {
                         {member.isActive ? "Active" : "Inactive"}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-2">
+                    <td className="px-4 sm:px-6 py-4 text-right">
+                      <div className="flex justify-end gap-1 sm:gap-2">
                         <button
                           onClick={() => handleEdit(member)}
                           className="p-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"

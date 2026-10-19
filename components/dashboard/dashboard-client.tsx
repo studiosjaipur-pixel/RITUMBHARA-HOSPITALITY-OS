@@ -98,7 +98,7 @@ export function DashboardClient({ data }: { data: DashboardData }) {
       </motion.div>
 
       {/* Stats Grid */}
-      <div className="grid shrink-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid shrink-0 gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.name}
@@ -108,13 +108,13 @@ export function DashboardClient({ data }: { data: DashboardData }) {
             className="group relative rounded-2xl border bg-card p-4 shadow-sm transition-all duration-300 hover:shadow-md hover:border-border/80 overflow-hidden"
           >
             <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-medium text-muted-foreground">{stat.name}</p>
+              <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{stat.name}</p>
               <div className={`rounded-xl p-2 ${stat.lightColor} transition-transform duration-300 group-hover:scale-110`}>
                 <stat.icon className="h-4 w-4" />
               </div>
             </div>
             <div className="flex items-baseline gap-2">
-              <h2 className="text-3xl font-bold tracking-tight">{stat.value}</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{stat.value}</h2>
             </div>
             <p className="mt-1.5 text-xs text-muted-foreground flex items-center gap-1">
               <ArrowUpRight className="h-3 w-3" />
@@ -131,7 +131,7 @@ export function DashboardClient({ data }: { data: DashboardData }) {
         transition={{ duration: 0.5, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 flex-1 min-h-0"
       >
-        <div className="col-span-4 flex flex-col rounded-2xl border bg-card p-5 shadow-sm min-h-0">
+        <div className="lg:col-span-4 flex flex-col rounded-2xl border bg-card p-4 sm:p-5 shadow-sm min-h-0">
           <div className="flex items-center justify-between mb-4 shrink-0">
             <div className="flex items-center gap-2">
               <div className="rounded-lg bg-rose-50 dark:bg-rose-500/10 p-1.5">
@@ -168,7 +168,7 @@ export function DashboardClient({ data }: { data: DashboardData }) {
           </div>
         </div>
         
-        <div className="col-span-3 flex flex-col rounded-2xl border bg-card p-5 shadow-sm min-h-0">
+        <div className="lg:col-span-3 flex flex-col rounded-2xl border bg-card p-4 sm:p-5 shadow-sm min-h-0">
           <div className="flex items-center justify-between mb-4 shrink-0">
             <div className="flex items-center gap-2">
               <div className="rounded-lg bg-amber-50 dark:bg-amber-500/10 p-1.5">
@@ -225,7 +225,7 @@ export function DashboardClient({ data }: { data: DashboardData }) {
         transition={{ duration: 0.5, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
         className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 flex-1 min-h-0"
       >
-        <div className="col-span-4 flex flex-col rounded-2xl border bg-card p-5 shadow-sm min-h-0">
+        <div className="lg:col-span-4 flex flex-col rounded-2xl border bg-card p-4 sm:p-5 shadow-sm min-h-0">
           <div className="flex items-center justify-between mb-4 shrink-0">
             <div className="flex items-center gap-2">
               <div className="rounded-lg bg-emerald-50 dark:bg-emerald-500/10 p-1.5">
@@ -262,7 +262,7 @@ export function DashboardClient({ data }: { data: DashboardData }) {
           </div>
         </div>
 
-        <div className="col-span-3 flex flex-col rounded-2xl border bg-card p-5 shadow-sm min-h-0">
+        <div className="lg:col-span-3 flex flex-col rounded-2xl border bg-card p-4 sm:p-5 shadow-sm min-h-0">
           <div className="flex items-center justify-between mb-4 shrink-0">
             <div className="flex items-center gap-2">
               <div className="rounded-lg bg-blue-50 dark:bg-blue-500/10 p-1.5">

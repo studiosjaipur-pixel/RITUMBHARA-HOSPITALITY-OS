@@ -237,10 +237,10 @@ function LeadsBoard({ data, refresh, refreshing }: { data: Extract<LeadsLoadResu
               className={`group text-left rounded-2xl border bg-card p-4 shadow-sm transition-all duration-300 hover:shadow-md ${active ? "border-primary/40 ring-2 ring-primary/15" : "hover:border-border/80"}`}
             >
               <div className="flex items-center justify-between mb-3">
-                <p className="text-sm font-medium text-muted-foreground">{t.label}</p>
+                <p className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{t.label}</p>
                 <div className={`rounded-xl p-2 ${t.color} transition-transform duration-300 group-hover:scale-110`}><t.icon className="h-4 w-4" /></div>
               </div>
-              <h2 className="text-3xl font-bold tracking-tight">{t.value}</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{t.value}</h2>
             </motion.button>
           )
         })}

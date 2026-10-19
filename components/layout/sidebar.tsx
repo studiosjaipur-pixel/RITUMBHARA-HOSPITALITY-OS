@@ -41,7 +41,7 @@ export function Sidebar() {
 
   return (
     <div className="flex h-full w-64 flex-col bg-gradient-to-b from-[#4a0518] via-[#5c0a20] to-[#3a0312] border-r border-white/[0.06]">
-      <div className="px-5 pt-6 pb-8">
+      <div className="shrink-0 px-5 pt-6 pb-6 lg:pb-8">
         <div className="flex flex-col items-start gap-1.5">
           <img src="/logo.svg" alt="Ritumbhara Logo" className="h-9 w-auto object-contain drop-shadow-md" />
           <h1 className="text-sm font-bold tracking-tight text-white/90 pl-1 mt-1">
@@ -49,7 +49,7 @@ export function Sidebar() {
           </h1>
         </div>
       </div>
-      <nav className="flex-1 space-y-0.5 px-3">
+      <nav className="flex-1 min-h-0 overflow-y-auto space-y-0.5 px-3">
         {navigation.map((item, index) => {
           const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
           return (
@@ -90,7 +90,7 @@ export function Sidebar() {
           )
         })}
       </nav>
-      <div className="mx-3 mb-4 rounded-xl bg-gradient-to-br from-rose-500/10 to-red-500/10 border border-rose-500/10 p-4">
+      <div className="shrink-0 mx-3 my-4 rounded-xl bg-gradient-to-br from-rose-500/10 to-red-500/10 border border-rose-500/10 p-4">
         <p className="text-[11px] font-medium text-rose-100">Need help?</p>
         <p className="text-[10px] text-rose-200/60 mt-1">Contact support for assistance with your account.</p>
         <a href="mailto:studios.jaipur@gmail.com" className="text-[10px] font-medium text-white/80 hover:text-white mt-2 inline-block transition-colors">studios.jaipur@gmail.com</a>
