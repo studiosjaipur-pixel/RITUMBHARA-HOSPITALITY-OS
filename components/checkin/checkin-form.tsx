@@ -5,22 +5,21 @@ import { useState } from "react"
 const inp = "mt-1 w-full rounded-lg border bg-background px-3 py-2 text-sm"
 const lbl = "block text-xs font-medium text-muted-foreground"
 
-interface Props { token: string; guestName: string; stay: string; checkIn: string; checkOut: string; doneCode: string | null; verified: boolean }
+interface Props { token: string; guestName: string; stay: string; checkIn: string; checkOut: string; done: boolean; verified: boolean }
 
-export function CheckInForm({ token, guestName, stay, checkIn, checkOut, doneCode, verified }: Props) {
-  const [code, setCode] = useState<string | null>(doneCode)
+export function CheckInForm({ token, guestName, stay, checkIn, checkOut, done, verified }: Props) {
+  const [submitted, setSubmitted] = useState(done)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState("")
   const [nationality, setNationality] = useState("Indian")
   const foreign = !["indian", "india", "in"].includes(nationality.trim().toLowerCase())
 
-  if (code) {
+  if (submitted) {
     return (
       <div className="rounded-2xl border bg-card p-6 text-center shadow-sm">
         <h1 className="text-lg font-semibold">{verified ? "You're checked in" : "Check-in details received"}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Show this code to our team on arrival.</p>
-        <p className="my-4 font-mono text-4xl font-bold tracking-[0.3em]">{code}</p>
-        <p className="text-xs text-muted-foreground">{stay} · {checkIn} to {checkOut}</p>
+        <p className="mt-2 text-sm text-muted-foreground">Our team will verify your details when you arrive.</p>
+        <p className="mt-4 text-xs text-muted-foreground">{stay} · {checkIn} to {checkOut}</p>
       </div>
     )
   }
@@ -45,7 +44,7 @@ export function CheckInForm({ token, guestName, stay, checkIn, checkOut, doneCod
     try {
       const res = await fetch(`/api/checkin/${token}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
       const data = await res.json()
-      if (data.ok) setCode(data.guestCode)
+      if (data.ok) setSubmitted(true)
       else setError(data.error || "Something went wrong.")
     } catch {
       setError("Network error. Please try again.")

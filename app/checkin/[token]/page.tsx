@@ -39,7 +39,7 @@ export default async function CheckInPage({ params }: { params: Promise<{ token:
             stay={`${row.reservation.unit.name}, ${row.reservation.unit.property.name}`}
             checkIn={row.reservation.checkIn.toISOString().slice(0, 10)}
             checkOut={row.reservation.checkOut.toISOString().slice(0, 10)}
-            doneCode={row.status !== "PENDING" ? row.guestCode : null}
+            done={row.status !== "PENDING"}
             verified={row.status === "VERIFIED"}
           />
         )}

@@ -1,7 +1,7 @@
 import test from "node:test"
 import assert from "node:assert/strict"
 import { isPublicPath } from "../lib/auth/policy"
-import { csvCell, hashCheckInToken, isWellFormedCheckInToken, maskIdNumber, newCheckInToken, newGuestCode, submissionSchema, toCsv, tooManySubmits } from "../lib/checkin/server"
+import { csvCell, hashCheckInToken, isWellFormedCheckInToken, maskIdNumber, newCheckInToken, submissionSchema, toCsv, tooManySubmits } from "../lib/checkin/server"
 
 const base = { fullName: "Asha Rao", dateOfBirth: "1990-04-02", gender: "FEMALE", nationality: "Indian", idType: "AADHAAR", idNumber: "1234 5678 9012", address: "12 MG Road, Pune" }
 
@@ -10,7 +10,6 @@ test("tokens are well formed and hashed", () => {
   assert.ok(isWellFormedCheckInToken(t.token))
   assert.equal(hashCheckInToken(t.token), t.tokenHash)
   assert.notEqual(t.tokenHash, t.token)
-  assert.match(newGuestCode(), /^[A-HJ-NP-Z2-9]{6}$/)
 })
 
 test("Aadhaar is masked to the last 4 digits; other IDs are kept", () => {

@@ -25,7 +25,7 @@ export default async function CheckInsPage() {
     checkOut: r.checkOut.toISOString().slice(0, 10),
     status: r.status,
     cin: r.checkIn
-      ? { status: r.checkIn.status, code: r.checkIn.guestCode, foreign: r.checkIn.isForeign, submittedAt: r.checkIn.submittedAt?.toISOString() ?? null }
+      ? { status: r.checkIn.status, foreign: r.checkIn.isForeign, submittedAt: r.checkIn.submittedAt?.toISOString() ?? null }
       : null,
     visitors: r.visitors.map((v) => ({ id: v.id, name: v.visitorName, inAt: v.inAt.toISOString(), outAt: v.outAt?.toISOString() ?? null })),
   }))

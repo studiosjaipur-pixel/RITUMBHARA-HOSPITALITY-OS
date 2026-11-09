@@ -7,7 +7,7 @@ import { prisma } from "@/lib/prisma"
 import { normalizePhoneNumber } from "@/lib/utils/phone"
 import { sendWhatsAppMessage } from "@/lib/whatsapp/client"
 import { publicBaseUrl } from "@/lib/long-stay/server"
-import { CHECKIN_TTL_DAYS, checkInUrl, newCheckInToken, newGuestCode } from "@/lib/checkin/server"
+import { CHECKIN_TTL_DAYS, checkInUrl, newCheckInToken } from "@/lib/checkin/server"
 
 // Creates (or re-issues) the private check-in link for a reservation. A new link replaces the old one.
 export async function createCheckInLink(reservationId: string) {
@@ -19,14 +19,7 @@ export async function createCheckInLink(reservationId: string) {
   if (reservation.checkIn) {
     await prisma.checkIn.update({ where: { id: reservation.checkIn.id }, data: { tokenHash, expiresAt } })
   } else {
-    for (let i = 0; i < 5; i++) {
-      try {
-        await prisma.checkIn.create({ data: { reservationId, tokenHash, expiresAt, guestCode: newGuestCode() } })
-        break
-      } catch (e) {
-        if (i === 4) throw e // guest code collision five times in a row
-      }
-    }
+    await prisma.checkIn.create({ data: { reservationId, tokenHash, expiresAt } })
   }
   const h = await headers()
   revalidatePath("/checkins")
@@ -56,26 +49,6 @@ export async function verifyCheckIn(reservationId: string) {
   })
   revalidatePath("/checkins")
   return { ok: true as const }
-}
-
-export async function findByGuestCode(code: string) {
-  await requireAdmin()
-  const c = code.trim().toUpperCase()
-  if (!/^[A-Z0-9]{6}$/.test(c)) return { ok: false as const, error: "Enter the 6-character code." }
-  const row = await prisma.checkIn.findUnique({
-    where: { guestCode: c },
-    include: { reservation: { include: { guest: true, unit: true } } },
-  })
-  if (!row) return { ok: false as const, error: "No check-in found for that code." }
-  return {
-    ok: true as const,
-    reservationId: row.reservationId,
-    status: row.status,
-    guest: row.fullName || row.reservation.guest.name,
-    unit: row.reservation.unit.name,
-    idType: row.idType,
-    idNumber: row.idNumber,
-  }
 }
 
 export async function addVisitor(reservationId: string, formData: FormData) {

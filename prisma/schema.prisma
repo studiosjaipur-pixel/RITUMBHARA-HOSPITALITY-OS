@@ -809,7 +809,6 @@ model CheckIn {
   id            String    @id @default(cuid())
   reservationId String    @unique
   tokenHash     String    @unique
-  guestCode     String    @unique
   status        String    @default("PENDING") // PENDING | SUBMITTED | VERIFIED
   expiresAt     DateTime
   submittedAt   DateTime?

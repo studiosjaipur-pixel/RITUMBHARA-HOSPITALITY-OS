@@ -1,9 +1,8 @@
-// Digital check-in helpers: link tokens, guest codes, validation, ID masking and CSV exports. SERVER-ONLY.
-import { createHash, randomBytes, randomInt } from "node:crypto"
+// Digital check-in helpers: link tokens, validation, ID masking and CSV exports. SERVER-ONLY.
+import { createHash, randomBytes } from "node:crypto"
 import { z } from "zod"
 
 export const CHECKIN_TTL_DAYS = 30
-const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789" // no 0/O/1/I
 
 export function newCheckInToken(): { token: string; tokenHash: string } {
   const token = randomBytes(32).toString("base64url")
@@ -16,12 +15,6 @@ export function hashCheckInToken(token: string): string {
 
 export function isWellFormedCheckInToken(token: string): boolean {
   return /^[A-Za-z0-9_-]{40,50}$/.test(token ?? "")
-}
-
-export function newGuestCode(): string {
-  let c = ""
-  for (let i = 0; i < 6; i++) c += CODE_ALPHABET[randomInt(CODE_ALPHABET.length)]
-  return c
 }
 
 export function checkInUrl(base: string, token: string): string {

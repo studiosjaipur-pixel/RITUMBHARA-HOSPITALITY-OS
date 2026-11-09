@@ -40,5 +40,5 @@ export async function POST(request: Request, { params }: { params: Promise<{ tok
       data: { idType: v.idType, idNumber },
     }),
   ])
-  return NextResponse.json({ ok: true, guestCode: row.guestCode }, { headers })
+  return NextResponse.json({ ok: true }, { headers })
 }

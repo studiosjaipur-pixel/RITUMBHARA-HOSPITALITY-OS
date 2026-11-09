@@ -1,11 +1,11 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import { addVisitor, createCheckInLink, findByGuestCode, sendCheckInLink, verifyCheckIn, visitorOut } from "@/app/actions/checkin"
+import { addVisitor, createCheckInLink, sendCheckInLink, verifyCheckIn, visitorOut } from "@/app/actions/checkin"
 
 export interface CheckInRow {
   id: string; guest: string; phone: string; unit: string; checkIn: string; checkOut: string; status: string
-  cin: { status: string; code: string; foreign: boolean; submittedAt: string | null } | null
+  cin: { status: string; foreign: boolean; submittedAt: string | null } | null
   visitors: { id: string; name: string; inAt: string; outAt: string | null }[]
 }
 
@@ -18,8 +18,6 @@ const btn = "rounded-lg border px-2.5 py-1 text-xs font-medium hover:bg-muted di
 export function CheckInsClient({ rows }: { rows: CheckInRow[] }) {
   const [pending, start] = useTransition()
   const [msg, setMsg] = useState("")
-  const [code, setCode] = useState("")
-  const [lookup, setLookup] = useState("")
   const [open, setOpen] = useState<string | null>(null)
   const [filter, setFilter] = useState("ALL")
   const [from, setFrom] = useState("")
@@ -51,16 +49,6 @@ export function CheckInsClient({ rows }: { rows: CheckInRow[] }) {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 rounded-xl border bg-card p-3">
-        <span className="text-sm font-medium">Guest code</span>
-        <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} maxLength={6} placeholder="ABC234" className={`${box} w-28 font-mono`} />
-        <button className={btn} disabled={pending} onClick={() => start(async () => {
-          const r = await findByGuestCode(code)
-          setLookup(r.ok ? `${r.guest} · ${r.unit} · ${r.status}${r.idType ? ` · ${r.idType} ${r.idNumber ?? ""}` : ""}` : r.error)
-        })}>Find</button>
-        {lookup && <span className="text-sm">{lookup}</span>}
-      </div>
-
       <div className="flex flex-wrap gap-1.5">
         {["ALL", "NONE", "PENDING", "SUBMITTED", "VERIFIED"].map((f) => (
           <button key={f} onClick={() => setFilter(f)} className={`${btn} ${filter === f ? "bg-muted" : ""}`}>{f === "NONE" ? "NO LINK" : f}</button>
@@ -85,7 +73,6 @@ export function CheckInsClient({ rows }: { rows: CheckInRow[] }) {
                       <>
                         <span className={`rounded-full px-2 py-0.5 text-xs ${badge[r.cin.status]}`}>{r.cin.status}</span>
                         {r.cin.foreign && <span className="ml-1 text-xs">Form C</span>}
-                        <div className="font-mono text-xs">{r.cin.code}</div>
                       </>
                     ) : <span className="text-xs text-muted-foreground">No link</span>}
                   </td>

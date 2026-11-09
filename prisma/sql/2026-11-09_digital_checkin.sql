@@ -3,7 +3,6 @@ CREATE TABLE IF NOT EXISTS "CheckIn" (
   "id" TEXT PRIMARY KEY,
   "reservationId" TEXT NOT NULL UNIQUE REFERENCES "Reservation"("id") ON DELETE CASCADE,
   "tokenHash" TEXT NOT NULL UNIQUE,
-  "guestCode" TEXT NOT NULL UNIQUE,
   "status" TEXT NOT NULL DEFAULT 'PENDING',
   "expiresAt" TIMESTAMP(3) NOT NULL,
   "submittedAt" TIMESTAMP(3),
