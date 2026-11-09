@@ -8,6 +8,8 @@
 //   /sign/<token>          - a guest e-signs their Long Stay agreement (shows only that one agreement)
 //   /api/sign/<token>/...  - that signing page's OTP, sign and signed-PDF endpoints (same one agreement only)
 //   /member                - the loyalty member portal (WhatsApp OTP sign-in; shows only the signed-in member's own data)
+//   /checkin/<token>       - a guest fills pre-arrival ID details for one reservation (token is the only credential)
+//   /api/checkin/<token>   - that page's submit endpoint (note: /api/checkin/export is admin-only, see isPublicPath)
 //   /api/member/...        - that portal's OTP, logout, profile and referral endpoints (member session checked inside)
 //
 // Machine-only (no admin session, but a server-side secret is required):
@@ -25,7 +27,7 @@
 //                            refuses everything when no Instagram/Meta app secret and verify token are set)
 //   /api/whatsapp/meta-audit   - read-only Meta audit; 404 everywhere except Preview with a matching META_AUDIT_KEY
 const PUBLIC_EXACT = new Set(["/login", "/member", "/api/whatsapp/webhook", "/api/whatsapp/meta-webhook", "/api/whatsapp/meta-audit", "/api/instagram/webhook"])
-const PUBLIC_PREFIXES = ["/stay/", "/api/stay/", "/sign/", "/api/sign/", "/api/member/"]
+const PUBLIC_PREFIXES = ["/stay/", "/api/stay/", "/sign/", "/api/sign/", "/api/member/", "/checkin/", "/api/checkin/"]
 const CRON_PREFIX = "/api/cron/"
 // Machine endpoints that authenticate themselves with their own secret (no admin session needed or used).
 const SELF_AUTHENTICATED_MACHINE_PATHS = new Set(["/api/inbox/inbound-email"])
@@ -40,6 +42,7 @@ function normalise(pathname: string): string {
 export function isPublicPath(pathname: string): boolean {
   const p = normalise(pathname)
   if (PUBLIC_EXACT.has(p)) return true
+  if (p === "/api/checkin/export") return false // admin-only CSV export lives under the public prefix
   return PUBLIC_PREFIXES.some((prefix) => p.startsWith(prefix) && p.length > prefix.length)
 }
 

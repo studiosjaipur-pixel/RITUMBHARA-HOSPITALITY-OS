@@ -192,6 +192,7 @@ const INTENTIONALLY_PUBLIC: Record<string, string> = {
   "app/api/sign/[token]/verify/route.ts": "Long Stay e-sign: checks that OTP (5 wrong codes lock the link)",
   "app/api/sign/[token]/sign/route.ts": "Long Stay e-sign: records the guest's signature",
   "app/api/sign/[token]/pdf/route.ts": "Long Stay e-sign: the guest's own signed PDF",
+  "app/api/checkin/[token]/route.ts": "Digital check-in: a guest submits ID details for the one reservation behind the link token (rate limited)",
   "app/api/member/otp/request/route.ts": "Member portal: sends a WhatsApp sign-in code (rate-limited per number and IP)",
   "app/api/member/otp/verify/route.ts": "Member portal: checks that code (3 wrong tries lock it) and sets the member session",
   "app/api/member/logout/route.ts": "Member portal: clears the member session cookie",

@@ -15,6 +15,7 @@ import {
   Target,
   CalendarRange,
   Crown,
+  ClipboardCheck,
   type LucideIcon,
 } from "lucide-react"
 
@@ -33,6 +34,7 @@ export const navigation: NavItem[] = [
   { name: "Reservations", href: "/reservations", icon: CalendarCheck },
   { name: "Long Stays", href: "/long-stay", icon: CalendarRange },
   { name: "Guests", href: "/guests", icon: Users },
+  { name: "Check-in", href: "/checkins", icon: ClipboardCheck },
   { name: "Loyalty", href: "/loyalty", icon: Crown },
   { name: "Units", href: "/units", icon: BedDouble },
   { name: "Operations", href: "/operations", icon: Wrench },

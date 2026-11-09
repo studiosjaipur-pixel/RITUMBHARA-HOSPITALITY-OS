@@ -180,6 +180,8 @@ model Reservation {
   property Property @relation(fields: [propertyId], references: [id])
   inboxConversations InboxConversation[]
   pointTransactions  PointTransaction[]
+  checkIn            CheckIn?
+  visitors           VisitorLog[]
 
   @@index([propertyId])
   @@index([guestId])
@@ -799,4 +801,53 @@ model LongStayAgreement {
 
   @@index([bookingId])
   @@index([status])
+}
+
+// Digital pre-arrival check-in: the guest fills ID details from a private link; staff verify on arrival.
+// Aadhaar numbers are stored as last 4 digits only (UIDAI rules); Form C details live in formC.
+model CheckIn {
+  id            String    @id @default(cuid())
+  reservationId String    @unique
+  tokenHash     String    @unique
+  guestCode     String    @unique
+  status        String    @default("PENDING") // PENDING | SUBMITTED | VERIFIED
+  expiresAt     DateTime
+  submittedAt   DateTime?
+  verifiedAt    DateTime?
+  verifiedBy    String?
+  fullName      String?
+  dateOfBirth   String?
+  gender        String?
+  nationality   String?
+  isForeign     Boolean   @default(false)
+  idType        String?
+  idNumber      String?
+  address       String?   @db.Text
+  purpose       String?
+  companions    Int       @default(0)
+  formC         Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+}
+
+// Gate log of visitors during a stay.
+model VisitorLog {
+  id            String    @id @default(cuid())
+  reservationId String
+  visitorName   String
+  visitorPhone  String?
+  idNote        String?
+  purpose       String?
+  inAt          DateTime  @default(now())
+  outAt         DateTime?
+  loggedBy      String?
+
+  reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  @@index([reservationId])
+  @@index([inAt])
 }
